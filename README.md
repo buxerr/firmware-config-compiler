@@ -1,25 +1,42 @@
-# Firmware Config Compiler
+# Firmware Configuration Schema Compiler: JSON to Bounded C11
 
-Compile one strict JSON settings schema into a bounded C11 struct, defaults function, validator, and a JSON defaults file for host tools. Generated C uses fixed-size storage and has no heap allocation.
+Generate a fixed-size C11 configuration struct, defaults function, validator, and JSON defaults file from one firmware settings schema. The Python compiler keeps device settings in one source of truth and emits static C storage without heap allocation.
 
-## Run
+Use it when firmware and host-side tools currently duplicate the same setting names, defaults, and value limits.
 
-Use Python 3.11 or newer. Install with pip install .; run the compiler with python -m firmware_config_compiler examples/weather_node.json --out build/generated. Run the Python test suite with python -m unittest discover -s tests -v.
+## Install and compile a schema
 
-Use --check-from old-schema.json to compare against a prior version. Any setting change requires a greater schema_version. The comparison reports additions, removals, type changes, range changes, default changes, string-length changes, and enum changes.
+Requires Python 3.11 or newer. From a repository checkout:
 
-## Schema types
+```sh
+git clone https://github.com/buxerr/firmware-config-compiler.git
+cd firmware-config-compiler
+python -m pip install .
+python -m firmware_config_compiler examples/weather_node.json --out build/generated
+```
 
-Supported settings are bool, int32, uint32, bounded ASCII string, and enum. Numeric types require min and max. Strings reserve one extra byte for a terminating NUL. The compiler rejects duplicate fields, invalid C identifiers, out-of-range defaults, unknown properties, and unsupported values before writing output.
+The output directory contains `firmware_config.h`, `firmware_config.c`, and `defaults.json`. Include the generated header in a C11 project, call `firmware_config_set_defaults`, then call `firmware_config_validate` after your application loads settings from flash or a transport.
 
-## Output
+## Supported setting types
 
-The generated header and source define firmware_config_set_defaults and firmware_config_validate. Include the header in a C11 project and call the validator after loading configuration from flash or a transport. The JSON defaults file can seed a manufacturing tool or host-side test.
+The schema supports `bool`, `int32`, `uint32`, bounded ASCII `string`, and `enum`. Numeric settings require `min` and `max`; strings reserve an extra byte for the terminating NUL. Invalid identifiers, duplicate fields, unsupported properties, and out-of-range defaults are rejected before output is written.
 
-CI compiles generated code with warnings treated as errors and runs a small C smoke test. The local unit suite validates schema checks and output behavior; it does not require a local C compiler.
+## Check schema compatibility
 
-## Scope
+Compare a schema from your application with its previous version before generating firmware code:
 
-This is an initial code generator, not a wire protocol, flash-storage driver, or automatic firmware migration engine. Cross-device version migration remains an application decision informed by the schema comparison.
+```sh
+python -m firmware_config_compiler new_schema.json --out build/generated --check-from old_schema.json
+```
 
-MIT licensed. See LICENSE.
+Any setting change requires a greater `schema_version`. The comparison reports added or removed settings and changes to types, ranges, defaults, string lengths, and enum values.
+
+The Python test suite runs with `python -m unittest discover -s tests -v`. CI also compiles generated code with warnings treated as errors and runs a small C smoke test.
+
+## Scope and limitations
+
+This is a settings schema compiler, not a wire protocol, flash-storage driver, JSON parser for embedded targets, or automatic firmware migration engine. The application owns serialization and decides how to migrate values between device versions.
+
+## License
+
+MIT. See [LICENSE](LICENSE).
