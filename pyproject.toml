@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "firmware-config-compiler"
+version = "0.1.0"
+description = "Compile bounded device settings schemas to static C and host defaults."
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Niko Filipic" }]
+dependencies = []
+
+[tool.setuptools]
+packages = ["firmware_config_compiler"]

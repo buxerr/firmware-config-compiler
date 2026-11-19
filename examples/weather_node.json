@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "device": "weather_node",
+  "settings": [
+    {
+      "name": "enabled",
+      "type": "bool",
+      "default": true
+    },
+    {
+      "name": "sample_interval_ms",
+      "type": "uint32",
+      "default": 1000,
+      "min": 100,
+      "max": 60000
+    },
+    {
+      "name": "device_name",
+      "type": "string",
+      "default": "weather-01",
+      "max_length": 32
+    },
+    {
+      "name": "mode",
+      "type": "enum",
+      "default": "normal",
+      "values": ["normal", "low_power", "diagnostic"]
+    }
+  ]
+}
