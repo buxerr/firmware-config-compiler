@@ -16,7 +16,7 @@ int main(void) {
         return 3;
     }
     firmware_config_set_defaults(&config);
-    config.label[0] = '\n';
+    config.device_name[0] = '\n';
     if (firmware_config_validate(&config)) {
         return 4;
     }
