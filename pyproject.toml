@@ -1,15 +1,26 @@
 [build-system]
-requires = ["setuptools>=68"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "firmware-config-compiler"
 version = "0.1.0"
-description = "Compile bounded device settings schemas to static C and host defaults."
+description = "Generate bounded, no-heap C11 firmware settings structs, validators, defaults, and schema compatibility reports."
+readme = "README.md"
 requires-python = ">=3.11"
-license = { text = "MIT" }
+license = "MIT"
+license-files = ["LICENSE"]
+keywords = ["embedded-c", "firmware-config", "schema-compiler", "code-generation", "no-heap", "c11", "configuration-migration"]
 authors = [{ name = "Niko Filipic" }]
 dependencies = []
+
+[project.urls]
+Repository = "https://github.com/buxerr/firmware-config-compiler"
+Issues = "https://github.com/buxerr/firmware-config-compiler/issues"
+Changelog = "https://github.com/buxerr/firmware-config-compiler/releases"
+
+[project.scripts]
+firmware-config-compiler = "firmware_config_compiler.cli:main"
 
 [tool.setuptools]
 packages = ["firmware_config_compiler"]
